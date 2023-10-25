@@ -13,6 +13,7 @@ public class Tile {
 	private int x,y;
 	private int mines_around;
 	private boolean revealed = false;
+	private boolean suspect = false;
 	private Tile[] tiles_around = new Tile[8];
 	
 	public Tile(int x, int y) {
@@ -25,13 +26,28 @@ public class Tile {
 		
 		if(revealed) {			
 			img = Toolkit.getDefaultToolkit().getImage(
-				"C:\\Users\\LEG7\\eclipse-workspace\\minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\"+mines_around+".png");
+				"C:\\Users\\LEG-8\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\"+mines_around+".png");
+		}else if(suspect){
+			img = Toolkit.getDefaultToolkit().getImage(
+					"C:\\Users\\LEG-8\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\sus.png");
 		}else {
 			img = Toolkit.getDefaultToolkit().getImage(
-				"C:\\Users\\LEG7\\eclipse-workspace\\minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\mine.png");
-			
+				"C:\\Users\\LEG-8\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\mine.png");
 		}
 		g.drawImage(img,x,y,SIZE,SIZE,observer);
+	}
+	
+	public void reveal() {
+		this.revealed = true;
+	}
+	
+	public void suspect() {
+		if(this.revealed) return;
+		suspect = !suspect;
+	}
+	
+	public boolean isSuspect(){
+		return suspect;
 	}
 	
 	public static int getSize() {
