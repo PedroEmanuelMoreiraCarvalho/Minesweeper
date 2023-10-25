@@ -22,13 +22,13 @@ public class Game extends JPanel implements MouseListener{
 	public static int minesweeper_widht = 10, minesweeper_height = 10;
 	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + 16, HEIGHT = minesweeper_height * Tile.getSize() + RECOIL;
 	public static ArrayList<Tile> minesweeper = new ArrayList<Tile>();
+
+	public static JFrame frame = new JFrame("Minesweeper");
 	
 	public static void main(String[] args) {
 		initMinesweeper();
 		initNeightborhood();
-		JFrame frame = new JFrame("Minesweeper");
-		
-		//39 = without header 
+
 		frame.setSize(WEIGHT, HEIGHT);
 		
 		Game game = new Game();
@@ -46,7 +46,7 @@ public class Game extends JPanel implements MouseListener{
 		for(int y = 0; y < minesweeper_height; y++) {
 			for(int x = 0; x < minesweeper_widht; x++) {
 				Tile tile = new Tile(x*Tile.getSize(),y*Tile.getSize()+RECOIL);
-				tile.setMinesAround(getRandomNumber(1,8));
+				tile.setMinesAround(getRandomNumber(0,8));
 				minesweeper.add(tile);
 			}
 		}
@@ -82,8 +82,8 @@ public class Game extends JPanel implements MouseListener{
 	
 	public static Tile getTileByPosition(int x, int y) {
 		for(Tile tile: minesweeper) {
-			if(tile.getX() > x && (tile.getX() + Tile.getSize()) > x
-			&& tile.getY() > y && (tile.getY() + Tile.getSize() > y)) {
+			if(tile.getX() < x && (tile.getX() + Tile.getSize()) > x
+			&& tile.getY() < y && (tile.getY() + Tile.getSize() > y)) {
 				return tile;
 			}
 		}
@@ -92,6 +92,7 @@ public class Game extends JPanel implements MouseListener{
 	
 	@Override
 	public void paint(Graphics g) {
+	    super.paintComponents(g);
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.BLACK);
 		g2d.setColor(Color.YELLOW);
@@ -112,7 +113,18 @@ public class Game extends JPanel implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON1) {
 			Tile tile = getTileByPosition(e.getX() - mouse_offset_x, e.getY() - mouse_offset_y);
-			if(tile != null) System.out.println(tile.getMinesAround());
+			if(tile != null && !tile.isSuspect()) {
+				tile.reveal();
+				frame.repaint();
+			}
+		}
+		
+		if(e.getButton() == MouseEvent.BUTTON3) {
+			Tile tile = getTileByPosition(e.getX() - mouse_offset_x, e.getY() - mouse_offset_y);
+			if(tile != null) {
+				tile.suspect();
+				frame.repaint();
+			}
 		}
 	}
 
