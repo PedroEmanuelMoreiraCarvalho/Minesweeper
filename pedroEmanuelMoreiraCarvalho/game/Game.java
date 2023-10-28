@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import pedroEmanuelMoreiraCarvalho.entities.Controller;
 import pedroEmanuelMoreiraCarvalho.entities.Tile;
 
 public class Game extends JPanel implements MouseListener{
@@ -17,21 +18,24 @@ public class Game extends JPanel implements MouseListener{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private final static int RECOIL = 76;
-	public static int minesweeper_widht = 10, minesweeper_height = 10;
-	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + 16, HEIGHT = minesweeper_height * Tile.getSize() + RECOIL;
+	private static final long serialVersionUID = 2L;
+	public final static int RECOIL = 80;
+	public static int minesweeper_widht = 10, minesweeper_height = 10, mines = 80, mines_left;
+	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + (RECOIL/5), HEIGHT = (minesweeper_height + 1) * Tile.getSize() + RECOIL;
+	
 	public static ArrayList<Tile> minesweeper = new ArrayList<Tile>();
-
+	public static boolean start = false;
+	public Controller menu = new Controller();
+	
 	public static JFrame frame = new JFrame("Minesweeper");
 	
 	public static void main(String[] args) {
-		initMinesweeper();
-		initNeightborhood();
+		Game game = new Game();
+		game.initMinesweeper();
+		game.initNeightborhood();
 
 		frame.setSize(WEIGHT, HEIGHT);
 		
-		Game game = new Game();
 
 		frame.add(game);
 		frame.addMouseListener(game);
@@ -42,13 +46,33 @@ public class Game extends JPanel implements MouseListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-	public static void initMinesweeper() {
+	public void initMinesweeper() {
 		for(int y = 0; y < minesweeper_height; y++) {
 			for(int x = 0; x < minesweeper_widht; x++) {
 				Tile tile = new Tile(x*Tile.getSize(),y*Tile.getSize()+RECOIL);
-				tile.setMinesAround(getRandomNumber(0,8));
+				tile.setMenu(menu);
 				minesweeper.add(tile);
 			}
+		}
+		mines_left = minesweeper_widht * minesweeper_height;
+	}
+	
+	public static void initMines(Tile initial_tile) {
+		Integer initial_indice = (((initial_tile.getY() - RECOIL) * minesweeper_widht) + initial_tile.getX()) / Tile.getSize();
+		
+		ArrayList<Integer> mines_indices = new ArrayList<Integer>();
+		
+		for(int i = 0; i < mines; i++) {
+			Integer num = (Integer) getRandomNumber(0, (minesweeper_widht * minesweeper_height));
+			while(mines_indices.contains(num) || minesweeper.get(num).isNeighboor(initial_tile) || num == initial_indice) {
+				num = getRandomNumber(0, (minesweeper_widht * minesweeper_height));
+			}
+			
+			mines_indices.add(num);
+		}
+		
+		for(int i: mines_indices) {
+			minesweeper.get(i).setMine();
 		}
 	}
 	
@@ -56,22 +80,60 @@ public class Game extends JPanel implements MouseListener{
 	    return (int) ((Math.random() * (max - min)) + min);
 	}
 	
-	public static void initNeightborhood() {
+	public static void initNumbers() {
+		for(Tile tile: minesweeper) {
+			tile.initNumber();
+		}
+	}
+	
+	public void initNeightborhood() {
 		for(int i = 0; i < minesweeper.size(); i++) {
 			Tile tile = getTile(i);
 			//upper
-			tile.setTileAround(0, getTile(i - minesweeper_widht - 1));
 			tile.setTileAround(1, getTile(i - minesweeper_widht));
-			tile.setTileAround(2, getTile(i - minesweeper_widht + 1));
 			//sides
-			if(i % minesweeper_widht == 0 ) tile.setTileAround(3, null);
-			else tile.setTileAround(3, getTile(i - 1));
-			if(i % minesweeper_widht == 9 ) tile.setTileAround(4, null);
-			else tile.setTileAround(4, getTile(i + 1));
+			if(i % minesweeper_widht == 0 ) {
+				tile.setTileAround(0, null);
+				tile.setTileAround(3, null);
+				tile.setTileAround(5, null);
+			}
+			else{
+				tile.setTileAround(0, getTile(i - minesweeper_widht - 1));
+				tile.setTileAround(3, getTile(i - 1));
+				tile.setTileAround(5, getTile(i + minesweeper_widht - 1));
+			}
+			if(i % minesweeper_widht == (minesweeper_widht - 1)) {
+				tile.setTileAround(2, null);
+				tile.setTileAround(4, null);
+				tile.setTileAround(7, null);
+			}
+			else {
+				tile.setTileAround(2, getTile(i - minesweeper_widht + 1));
+				tile.setTileAround(4, getTile(i + 1));
+				tile.setTileAround(7, getTile(i + minesweeper_widht + 1));
+			}
 			//lower
-			tile.setTileAround(5, getTile(i + minesweeper_widht - 1));
 			tile.setTileAround(6, getTile(i + minesweeper_widht));
-			tile.setTileAround(7, getTile(i + minesweeper_widht + 1));
+		}
+	}
+	
+	public void win() {
+		menu.win();
+		for(Tile tile: minesweeper) {
+			if(!tile.isRevealed() && !tile.isFlagged()) {
+				if(tile.isSuspect()) {
+					tile.suspect();
+				}
+				tile.suspect();
+			}
+		}
+	}
+	
+	public void gameOver() {
+		for(Tile tile: minesweeper) {
+			if(tile.hasMine()) {
+				tile.reveal();
+			}
 		}
 	}
 	
@@ -83,7 +145,7 @@ public class Game extends JPanel implements MouseListener{
 	public static Tile getTileByPosition(int x, int y) {
 		for(Tile tile: minesweeper) {
 			if(tile.getX() < x && (tile.getX() + Tile.getSize()) > x
-			&& tile.getY() < y && (tile.getY() + Tile.getSize() > y)) {
+			&& tile.getY() < y && (tile.getY() + Tile.getSize()) > y) {
 				return tile;
 			}
 		}
@@ -97,6 +159,8 @@ public class Game extends JPanel implements MouseListener{
 		g2d.setColor(Color.BLACK);
 		g2d.setColor(Color.YELLOW);
 		
+		menu.render(g2d, this);
+
 		for(Tile tile: minesweeper) {
 			tile.render(g2d,this);
 		}
@@ -111,10 +175,29 @@ public class Game extends JPanel implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+
 		if(e.getButton() == MouseEvent.BUTTON1) {
 			Tile tile = getTileByPosition(e.getX() - mouse_offset_x, e.getY() - mouse_offset_y);
-			if(tile != null && !tile.isSuspect()) {
+			if(tile == null) return;
+			if(tile.isFlagged() || tile.isSuspect()) return;
+			
+			if(!start) {
+				start = true;
+				initMines(tile);
+				initNumbers();
 				tile.reveal();
+				frame.repaint();
+				return;
+			}
+			
+			if(!tile.isSuspect()) {
+				tile.reveal();
+				if(mines_left == mines) {
+					win();
+				}
+				if(menu.isOver()) {
+					gameOver();
+				}
 				frame.repaint();
 			}
 		}
