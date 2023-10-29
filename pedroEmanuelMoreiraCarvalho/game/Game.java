@@ -20,7 +20,7 @@ public class Game extends JPanel implements MouseListener{
 	 */
 	private static final long serialVersionUID = 2L;
 	public final static int RECOIL = 80;
-	public static int minesweeper_widht = 10, minesweeper_height = 10, mines = 80, mines_left;
+	public static int minesweeper_widht = 10, minesweeper_height = 10, mines = 1, mines_left;
 	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + (RECOIL/5), HEIGHT = (minesweeper_height + 1) * Tile.getSize() + RECOIL;
 	
 	public static ArrayList<Tile> minesweeper = new ArrayList<Tile>();
@@ -34,9 +34,8 @@ public class Game extends JPanel implements MouseListener{
 		game.initMinesweeper();
 		game.initNeightborhood();
 
-		frame.setSize(WEIGHT, HEIGHT);
+		frame.setSize(WEIGHT, HEIGHT+8); // 8 = disconsidering the opperation bar
 		
-
 		frame.add(game);
 		frame.addMouseListener(game);
 		
@@ -44,6 +43,15 @@ public class Game extends JPanel implements MouseListener{
 		frame.setVisible(true);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public void restart() {
+		start = false;
+		minesweeper.clear();
+		menu.restart();
+		this.initMinesweeper();
+		this.initNeightborhood();
+		frame.repaint();
 	}
 	
 	public void initMinesweeper() {
@@ -121,9 +129,7 @@ public class Game extends JPanel implements MouseListener{
 		menu.win();
 		for(Tile tile: minesweeper) {
 			if(!tile.isRevealed() && !tile.isFlagged()) {
-				if(tile.isSuspect()) {
-					tile.suspect();
-				}
+				if(tile.isSuspect()) tile.suspect();
 				tile.suspect();
 			}
 		}
@@ -135,6 +141,7 @@ public class Game extends JPanel implements MouseListener{
 				tile.reveal();
 			}
 		}
+		start = false;
 	}
 	
 	public static Tile getTile(int pos) {
@@ -144,8 +151,7 @@ public class Game extends JPanel implements MouseListener{
 	
 	public static Tile getTileByPosition(int x, int y) {
 		for(Tile tile: minesweeper) {
-			if(tile.getX() < x && (tile.getX() + Tile.getSize()) > x
-			&& tile.getY() < y && (tile.getY() + Tile.getSize()) > y) {
+			if(tile.getX() < x && (tile.getX() + Tile.getSize()) > x && tile.getY() < y && (tile.getY() + Tile.getSize()) > y) {
 				return tile;
 			}
 		}
@@ -178,8 +184,13 @@ public class Game extends JPanel implements MouseListener{
 
 		if(e.getButton() == MouseEvent.BUTTON1) {
 			Tile tile = getTileByPosition(e.getX() - mouse_offset_x, e.getY() - mouse_offset_y);
+			if(menu.checkClick(e.getX(),e.getY())) {
+				this.restart();
+			}
+			
 			if(tile == null) return;
 			if(tile.isFlagged() || tile.isSuspect()) return;
+			if(tile.isRevealed() && tile.hasMine()) return;
 			
 			if(!start) {
 				start = true;
@@ -192,11 +203,10 @@ public class Game extends JPanel implements MouseListener{
 			
 			if(!tile.isSuspect()) {
 				tile.reveal();
-				if(mines_left == mines) {
-					win();
-				}
 				if(menu.isOver()) {
 					gameOver();
+				}else if(mines_left == mines) {
+					win();
 				}
 				frame.repaint();
 			}
