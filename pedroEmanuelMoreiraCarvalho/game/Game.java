@@ -20,7 +20,7 @@ public class Game extends JPanel implements MouseListener{
 	 */
 	private static final long serialVersionUID = 2L;
 	public final static int RECOIL = 80;
-	public static int minesweeper_widht = 10, minesweeper_height = 10, mines = 1, mines_left;
+	public static int minesweeper_widht = 30, minesweeper_height = 16, mines = 99, mines_left;
 	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + (RECOIL/5), HEIGHT = (minesweeper_height + 1) * Tile.getSize() + RECOIL;
 	
 	public static ArrayList<Tile> minesweeper = new ArrayList<Tile>();
