@@ -8,7 +8,7 @@ import pedroEmanuelMoreiraCarvalho.game.Game;
 
 public class Tile {
 	
-	private final static int SIZE = 40, RECOIL = 0;
+	private final static int SIZE = 30, RECOIL = 0;
 	private int x,y;
 	private int mines_around;
 	private boolean revealed = false;
@@ -95,11 +95,11 @@ public class Tile {
 		if(!flagged && !suspect) {
 			flagged = true;
 			suspect = false;
-			menu.incrementCounter();
+			menu.decrementCounter();
 		}else if(flagged && !suspect){
 			flagged = false;
 			suspect = true;
-			menu.decrementCounter();
+			menu.incrementCounter();
 		}else {
 			flagged = false;
 			suspect = false;

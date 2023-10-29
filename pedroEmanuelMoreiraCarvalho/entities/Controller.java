@@ -12,14 +12,23 @@ public class Controller {
 	
 	private int state = 0;
 	
-	private final int 	SCREEN_MIDDLE_X = (Game.minesweeper_widht * Tile.getSize()) / 2,
+	private final int 	SIZE = 40,
+						SCREEN_MIDDLE_X = (Game.minesweeper_widht * Tile.getSize()) / 2,
 						SCREEN_MIDDLE_Y = Game.RECOIL / 2,
-						SIZE = 40,
-						OFFSET_COUNTER = (Game.minesweeper_widht * Tile.getSize());
+						OFFSET_B_X = SCREEN_MIDDLE_X-(SIZE/2),
+						OFFSET_B_Y = SCREEN_MIDDLE_Y-(SIZE/2),
+						OFFSET_COUNTER_X = (int)(SCREEN_MIDDLE_X * 1.5),
+						OFFSET_COUNTER_Y = (int)((SCREEN_MIDDLE_Y * 4) / 3);
 	private int mine_counter;
 	
 	public Controller() {
-		mine_counter = 0;
+		mine_counter = Game.mines;
+	}
+	
+	public boolean checkClick(int x, int y){
+		x -= 8;
+		y -= 32;// disconsidering the opperation bar
+		return (x > OFFSET_B_X && x < (OFFSET_B_X + SIZE) && y > OFFSET_B_Y && y < (OFFSET_B_Y + SIZE));
 	}
 	
 	public void render(Graphics2D g,Game observer){
@@ -42,10 +51,10 @@ public class Controller {
 				break;
 		}
 		
-		g.drawImage(img,SCREEN_MIDDLE_X-(SIZE/2),SCREEN_MIDDLE_Y-(SIZE/2),SIZE,SIZE,observer);
+		g.drawImage(img,OFFSET_B_X,OFFSET_B_Y,SIZE,SIZE,observer);
 		g.setColor(Color.RED);
-		g.setFont(new Font("Courier", Font.BOLD,SIZE));
-		g.drawString(String.valueOf(mine_counter), OFFSET_COUNTER-(SIZE*2),SCREEN_MIDDLE_Y + (SIZE/2) - 10);
+		g.setFont(new Font("Fira Code Retina", Font.BOLD,SIZE));
+		g.drawString(String.valueOf(mine_counter), OFFSET_COUNTER_X ,OFFSET_COUNTER_Y);
 	}
 	
 	public void incrementCounter() {
@@ -58,7 +67,7 @@ public class Controller {
 	
 	public void restart() {
 		state = 0;
-		mine_counter = 0;
+		mine_counter = Game.mines;
 	}
 	
 	public void gameOver() {
