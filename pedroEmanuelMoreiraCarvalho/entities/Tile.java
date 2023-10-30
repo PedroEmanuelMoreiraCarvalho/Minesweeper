@@ -33,18 +33,18 @@ public class Tile {
 		if(revealed) {
 			if(this.hasMine()) {
 				img = Toolkit.getDefaultToolkit().getImage(
-					    "C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\bomb.png");
+					    Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\bomb.png");
 			}else img = Toolkit.getDefaultToolkit().getImage(
-				    "C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\"+mines_around+".png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\"+mines_around+".png");
 		}else if(flagged){
 			img = Toolkit.getDefaultToolkit().getImage(
-					"C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\flag.png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\flag.png");
 		}else if(suspect){
 			img = Toolkit.getDefaultToolkit().getImage(
-					"C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\sus.png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\sus.png");
 		}else {
 			img = Toolkit.getDefaultToolkit().getImage(
-				"C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\mine.png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\mine.png");
 		}
 		g.drawImage(img,x,y+RECOIL,SIZE,SIZE,observer);
 	}

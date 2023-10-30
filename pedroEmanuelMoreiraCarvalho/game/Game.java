@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -23,17 +24,26 @@ public class Game extends JPanel implements MouseListener{
 	public static int minesweeper_widht = 30, minesweeper_height = 16, mines = 99, mines_left;
 	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + (RECOIL/5), HEIGHT = (minesweeper_height + 1) * Tile.getSize() + RECOIL;
 	
+	public static final String PATHNAME = getPathName();
+	
 	public static ArrayList<Tile> minesweeper = new ArrayList<Tile>();
 	public static boolean start = false;
+	public boolean game_over = false;
 	public Controller menu = new Controller();
 	
 	public static JFrame frame = new JFrame("Minesweeper");
+	
+	static String getPathName() {
+        File f = new File("program");
+        String absolute = f.getAbsolutePath();
+        String[] ab = absolute.split("program");
+        return ab[0];
+	}
 	
 	public static void main(String[] args) {
 		Game game = new Game();
 		game.initMinesweeper();
 		game.initNeightborhood();
-
 		frame.setSize(WEIGHT, HEIGHT+8); // 8 = disconsidering the opperation bar
 		
 		frame.add(game);
@@ -47,6 +57,7 @@ public class Game extends JPanel implements MouseListener{
 	
 	public void restart() {
 		start = false;
+		game_over = false;
 		minesweeper.clear();
 		menu.restart();
 		this.initMinesweeper();
@@ -66,13 +77,11 @@ public class Game extends JPanel implements MouseListener{
 	}
 	
 	public static void initMines(Tile initial_tile) {
-		Integer initial_indice = (((initial_tile.getY() - RECOIL) * minesweeper_widht) + initial_tile.getX()) / Tile.getSize();
-		
 		ArrayList<Integer> mines_indices = new ArrayList<Integer>();
 		
 		for(int i = 0; i < mines; i++) {
 			Integer num = (Integer) getRandomNumber(0, (minesweeper_widht * minesweeper_height));
-			while(mines_indices.contains(num) || minesweeper.get(num).isNeighboor(initial_tile) || num == initial_indice) {
+			while(mines_indices.contains(num) || minesweeper.get(num).isNeighboor(initial_tile) || minesweeper.get(num) == initial_tile) {
 				num = getRandomNumber(0, (minesweeper_widht * minesweeper_height));
 			}
 			
@@ -141,6 +150,7 @@ public class Game extends JPanel implements MouseListener{
 				tile.reveal();
 			}
 		}
+		game_over = true;
 		start = false;
 	}
 	
@@ -190,10 +200,11 @@ public class Game extends JPanel implements MouseListener{
 			
 			if(tile == null) return;
 			if(tile.isFlagged() || tile.isSuspect()) return;
-			if(tile.isRevealed() && tile.hasMine()) return;
+			if(!tile.isRevealed() && game_over || tile.isRevealed() && game_over) return;
 			
 			if(!start) {
 				start = true;
+				game_over = false;
 				initMines(tile);
 				initNumbers();
 				tile.reveal();
@@ -213,6 +224,7 @@ public class Game extends JPanel implements MouseListener{
 		}
 		
 		if(e.getButton() == MouseEvent.BUTTON3) {
+			if(game_over) return;
 			Tile tile = getTileByPosition(e.getX() - mouse_offset_x, e.getY() - mouse_offset_y);
 			if(tile != null) {
 				tile.suspect();

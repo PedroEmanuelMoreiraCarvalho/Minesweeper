@@ -39,15 +39,15 @@ public class Controller {
 		switch(state) {
 			case 1:
 				img = Toolkit.getDefaultToolkit().getImage(
-						"C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\game_over.png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\game_over.png");
 				break;
 			case 2:
 				img = Toolkit.getDefaultToolkit().getImage(
-						"C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\win.png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\win.png");
 				break;
 			default:
 				img = Toolkit.getDefaultToolkit().getImage(
-						"C:\\Users\\pedro\\eclipse-workspace\\Minesweeper\\src\\pedroEmanuelMoreiraCarvalho\\images\\face.png");
+						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\face.png");
 				break;
 		}
 		
