@@ -3,11 +3,13 @@ package pedroEmanuelMoreiraCarvalho.game;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -19,12 +21,24 @@ public class Game extends JPanel implements MouseListener{
 	/**
 	 * 
 	 */
+	
+	public static Image mine_img,
+						sus_img,
+						flag_img,
+						bomb_img,
+						game_over_img,
+						win_img,
+						face_img;
+	public static Image[] numbers_img = new Image[9];
+	
+	public static Image getImageMinesAround(int mines_around) {
+		return numbers_img[mines_around];
+	}
+	
 	private static final long serialVersionUID = 2L;
 	public final static int RECOIL = 80;
-	public static int minesweeper_widht = 30, minesweeper_height = 16, mines = 99, mines_left;
+	public static int minesweeper_widht = 9, minesweeper_height = 9, mines = 10, mines_left;
 	public static final int WEIGHT = minesweeper_widht * Tile.getSize() + (RECOIL/5), HEIGHT = (minesweeper_height + 1) * Tile.getSize() + RECOIL;
-	
-	public static final String PATHNAME = getPathName();
 	
 	public static ArrayList<Tile> minesweeper = new ArrayList<Tile>();
 	public static boolean start = false;
@@ -33,11 +47,21 @@ public class Game extends JPanel implements MouseListener{
 	
 	public static JFrame frame = new JFrame("Minesweeper");
 	
-	static String getPathName() {
-        File f = new File("program");
-        String absolute = f.getAbsolutePath();
-        String[] ab = absolute.split("program");
-        return ab[0];
+	public Game() {
+		try {
+			mine_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/mine.png"));
+			sus_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/sus.png"));
+			flag_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/flag.png"));
+			bomb_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/bomb.png"));
+			game_over_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/game_over.png"));
+			win_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/win.png"));
+			face_img = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/face.png"));
+			for(int i = 0; i < 9; i++) {
+				numbers_img[i] = ImageIO.read(this.getClass().getResource("/pedroEmanuelMoreiraCarvalho/images/"+i+".png"));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) {

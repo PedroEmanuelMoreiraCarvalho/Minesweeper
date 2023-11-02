@@ -3,8 +3,6 @@ package pedroEmanuelMoreiraCarvalho.entities;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
 
 import pedroEmanuelMoreiraCarvalho.game.Game;
 
@@ -35,23 +33,17 @@ public class Controller {
 		g.setColor(Color.gray);
 		g.fillRect(0, 0, Game.minesweeper_widht * Tile.getSize(), Game.RECOIL);
 		
-		Image img;
 		switch(state) {
 			case 1:
-				img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\game_over.png");
+				g.drawImage(Game.game_over_img,OFFSET_B_X,OFFSET_B_Y,SIZE,SIZE,observer);
 				break;
 			case 2:
-				img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\win.png");
+				g.drawImage(Game.win_img,OFFSET_B_X,OFFSET_B_Y,SIZE,SIZE,observer);
 				break;
 			default:
-				img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\face.png");
+				g.drawImage(Game.face_img,OFFSET_B_X,OFFSET_B_Y,SIZE,SIZE,observer);
 				break;
 		}
-		
-		g.drawImage(img,OFFSET_B_X,OFFSET_B_Y,SIZE,SIZE,observer);
 		g.setColor(Color.RED);
 		g.setFont(new Font("Fira Code Retina", Font.BOLD,SIZE));
 		g.drawString(String.valueOf(mine_counter), OFFSET_COUNTER_X ,OFFSET_COUNTER_Y);

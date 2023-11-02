@@ -1,8 +1,6 @@
 package pedroEmanuelMoreiraCarvalho.entities;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
 
 import pedroEmanuelMoreiraCarvalho.game.Game;
 
@@ -28,25 +26,16 @@ public class Tile {
 	}
 	
 	public void render(Graphics2D g,Game observer){
-		Image img;
-		
 		if(revealed) {
-			if(this.hasMine()) {
-				img = Toolkit.getDefaultToolkit().getImage(
-					    Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\bomb.png");
-			}else img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\"+mines_around+".png");
+			if(this.hasMine()) g.drawImage(Game.bomb_img,x,y+RECOIL,SIZE,SIZE,observer);
+			else g.drawImage(Game.getImageMinesAround(mines_around),x,y+RECOIL,SIZE,SIZE,observer);
 		}else if(flagged){
-			img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\flag.png");
+			g.drawImage(Game.flag_img,x,y+RECOIL,SIZE,SIZE,observer);
 		}else if(suspect){
-			img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\sus.png");
+			g.drawImage(Game.sus_img,x,y+RECOIL,SIZE,SIZE,observer);
 		}else {
-			img = Toolkit.getDefaultToolkit().getImage(
-						Game.PATHNAME +"\\src\\pedroEmanuelMoreiraCarvalho\\images\\mine.png");
+			g.drawImage(Game.mine_img,x,y+RECOIL,SIZE,SIZE,observer);
 		}
-		g.drawImage(img,x,y+RECOIL,SIZE,SIZE,observer);
 	}
 	
 	public boolean isRevealed() {
